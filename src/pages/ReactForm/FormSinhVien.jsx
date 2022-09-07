@@ -2,64 +2,33 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 
 class formSinhVien extends Component {
-  state = {
-    values: {
-      maSV: "",
-      hoTen: "",
-      soDienThoai: "",
-      email: "",
-    },
-    errors: {
-      maSV: "",
-      hoTen: "",
-      soDienThoai: "",
-      email: "",
-    },
-  };
+
   handleChange = (event) => {
     let { id, value,type,pattern } = event.target;
-
-    //Kiểm tra rỗng:
-    let errorMess = "";
-    if (value.trim() === "") {
-      errorMess = id + " không được bỏ trống !";
-    }
-
-    //Kiểm tra email:
-    if (type === "email") {
-      const regex = new RegExp(pattern);
-      if (!regex.test(value)) {
-        errorMess = id + " không đúng định dạng";
+    const action = {
+      type: 'HANDLE_CHANGE',
+      payload:{
+        id:id,
+        value:value,
+        type:type,
+        pattern:pattern
       }
     }
-
-    //Kiểm tra số điện thoại:
-    if (id === "soDienThoai") {
-      const regex = new RegExp(pattern);
-      if (!regex.test(value)) {
-        errorMess = id + " không đúng định dạng";
-      }
-    }
-
-    let values = { ...this.state.values, [id]: value };
-    let errors = { ...this.state.errors, [id]: errorMess };
-    this.setState(
-      {
-        values: values,
-        errors: errors,
-      },
-      () => {
-        console.log(this.state);
-      }
-    );
+    this.props.dispatch(action); 
   };
 
-  handleSubmit = (event) => {
-    event.preventDefault();
-    this.props.themSinhVien(this.state.values);
-  };
+  handleSubmit = (e) => {
+    e.preventDefault();
+    const action = {
+      type:'HANDLE_SUBMIT',
+      payload: this.props.ttsv
+    }
+    this.props.dispatch(action)
+}
 
   render() {
+    const { maSV,soDienThoai,hoTen,email } = this.props.ttsv;
+    let err = this.props.error;
     return (
       <form action="" className="card mt-3" onSubmit={this.handleSubmit}>
         <div className="card-header bg-dark text-white">
@@ -73,21 +42,22 @@ class formSinhVien extends Component {
                 type="text"
                 className="form-control"
                 id="maSV"
-                value={this.state.values.maSV}
+                value={maSV}
                 onInput={this.handleChange}
               />
-              <p className="text-danger">{this.state.errors.maSV}</p>
+              <p className="text-danger">{err.maSV}</p>
             </div>
             <div className="form-group mt-4">
               <p>Số điện thoại:</p>
               <input
-                 pattern="^(0|[1-9][0-9]*)$"
+                 
                 className="form-control"
                 id="soDienThoai"
-                value={this.state.values.soDienThoai}
+                pattern="[0-9]+"
+                value={soDienThoai}
                 onInput={this.handleChange}
               />
-              <p className="text-danger">{this.state.errors.soDienThoai}</p>
+              <p className="text-danger">{err.soDienThoai}</p>
             </div>
           </div>
           <div className="col-6">
@@ -97,10 +67,10 @@ class formSinhVien extends Component {
                 type="text"
                 className="form-control"
                 id="hoTen"
-                value={this.state.values.hoTen}
+                value={hoTen}
                 onInput={this.handleChange}
               />
-              <p className="text-danger">{this.state.errors.hoTen}</p>
+              <p className="text-danger">{err.hoTen}</p>
             </div>
             <div className="form-group mt-4">
               <p>Email:</p>
@@ -109,15 +79,15 @@ class formSinhVien extends Component {
                 pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
                 className="form-control"
                 id="email"
-                value={this.state.values.email}
+                value={email}
                 onInput={this.handleChange}
               />
-              <p className="text-danger">{this.state.errors.email}</p>
+              <p className="text-danger">{err.email}</p>
             </div>
           </div>
         </div>
         <div className="card-footer mt-2 ">
-          <button type="submit" className="btn btn-success">
+          <button type="submit" className="btn btn-primary">
             Thêm sinh viên
           </button>
         </div>
@@ -126,16 +96,10 @@ class formSinhVien extends Component {
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    themSinhVien: (sinhVien) => {
-      const action = {
-        type: "THEM_SINH_VIEN",
-        sinhVien,
-      };
-      dispatch(action);
-    },
-  };
-};
+const mapStateToProps = (state) => ({
+  ttsv: state.sinhVienReducer.sinhVienInfo,
+  error: state.sinhVienReducer.errorInfo,
 
-export default connect(null, mapDispatchToProps)(formSinhVien);
+})
+
+export default connect(mapStateToProps)(formSinhVien)

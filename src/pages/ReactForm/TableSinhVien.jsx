@@ -11,6 +11,22 @@ class TableSinhVien extends Component {
         <td>{sinhVien.soDienThoai}</td>
         <td>{sinhVien.hoTen}</td>
         <td>{sinhVien.email}</td>
+        <td>
+          <button className="btn btn-danger mx-2" onClick={()=>{
+            const action = {
+              type: 'XOA_SV',
+              payload: index
+            }
+            this.props.dispatch(action); 
+          }}>XÓA</button>
+          <button className="btn btn-primary" onClick={()=>{
+            const action = {
+              type: 'SUA_SV',
+              payload: index
+            }
+            this.props.dispatch(action); 
+          }}>SỬA</button>
+        </td>
       </tr>
     })
   }

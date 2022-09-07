@@ -1,5 +1,5 @@
 import { createStore, combineReducers } from "redux";
-import sinhVienReducer from "./reducers/sinhVienReducer";
+import {sinhVienReducer} from "./reducers/sinhVienReducer";
 
 const rootReducer = combineReducers({
     //Nơi chứa các state của ứng dụng
